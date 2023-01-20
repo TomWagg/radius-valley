@@ -1,0 +1,19 @@
+name: radius-gap
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python >= 3.6
+  - pip
+  - numpy
+  - astropy
+  - pandas
+  - scipy
+  - seaborn
+  - matplotlib
+  - jupyter
+  - jupyterlab
+  - ipython
+  - exoplanet
+  - pip:
+    - lightkurve
