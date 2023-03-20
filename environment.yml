@@ -1,4 +1,4 @@
-name: radius-gap
+name: radius-valley
 channels:
   - defaults
   - conda-forge
