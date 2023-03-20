@@ -1,0 +1,83 @@
+\documentclass[12pt, letterpaper, twoside]{article}
+\usepackage{nopageno,epsfig, amsmath, amssymb}
+\usepackage{physics}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={blue},
+    citecolor={blue},
+    urlcolor={blue}
+}
+\usepackage{empheq}
+\usepackage{wrapfig}
+
+\usepackage[letterpaper,
+            margin=0.8in]{geometry}
+
+
+\title{Radius Valley Project Plan}
+\date{}
+
+\newcommand{\todo}[1]{{\color{red}\begin{center}TODO: #1\end{center}}}
+
+% custom function for adding units
+\makeatletter
+\newcommand{\unit}[1]{%
+    \,\mathrm{#1}\checknextarg}
+\newcommand{\checknextarg}{\@ifnextchar\bgroup{\gobblenextarg}{}}
+\newcommand{\gobblenextarg}[1]{\,\mathrm{#1}\@ifnextchar\bgroup{\gobblenextarg}{}}
+\makeatother
+
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\angstrom}{\mbox{\normalfont\AA}}
+\allowdisplaybreaks
+
+\begin{document}
+
+\maketitle{}
+
+\vspace{-2.5cm}
+
+\section*{General Concept}
+The overall plan is to use multi-transiting systems to break the degeneracies in measuring exoplanet radii. Since each planet orbits the \textit{same} star we can fix several parameters and better fit the rest!
+
+\section*{Radius Fitting Plan}
+We'll collect any 3+ multiplicity systems that span the radius valley and for each we aim to derive estimates of their planetary radii using either \texttt{exoplanet} or Julia. In each case we will need to consider the following:
+
+\begin{enumerate}
+    \item \textbf{Detrending:} Decide how to convert TPFs to lightcurves
+    \begin{itemize}
+        \item Correct using pixel level detrending? Does this remove all systematics?
+    \end{itemize}
+    \item \textbf{TTVs:} For each system we need to make a decision about TTVs (probably using \texttt{TTVFaster} package to check how strong TTVs would be)
+    \begin{itemize}
+        \item Either we used fixed ephemeris or free transit times
+        \item Latter can be too free and smear out the ingress and egress when TTVs are not present
+        \item The former is a reasonable assumption if you are not close to resonance or if you're separated by quite a lot (since no TTVs)
+    \end{itemize}
+    \item \textbf{Limb Darkening:} Choose what order of limb darkening model to use (quadratic default)
+    \item \textbf{Sampling:} Ensure time sampling of model doesn't have a strong effect
+    \item \textbf{Stellar noise sources}: Consider the presence of starspots and companions
+    \begin{itemize}
+        \item Starspots (both in transit and out of transit) - out can result in periodic noise, can change mean surface brightness of the star, in of course affects the depth of the transit
+        \item Are there stellar companions that result in dilution?
+        \item Any outliers from CRs or flares?
+    \end{itemize}
+    \item \textbf{Model specifics:}
+    \begin{itemize}
+        \item Does parameterisation of the model affect the results?
+        \item Do priors affect the model?
+        \item Is the sample properly converged?
+    \end{itemize}
+\end{enumerate}
+
+\section*{Expected Results}
+
+After working out the radii we can make a statement about the location of the gap. In addition we can work out how that correlates with stellar and orbital parameters.
+
+
+\end{document}
+
+ 
