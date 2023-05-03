@@ -52,11 +52,13 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
 
     # specify conditions on the planet name and whether to get the default parameters
     name_cond = f"lower(pl_name)+like+'%{search_name.lower()}%'" if search_name is not None else ""
-    default_cond = "and default_flag=1" if which == "default" else ""
+    default_cond = "default_flag=1" if which == "default" else ""
+    if search_name is not None:
+        default_cond = " and " + default_cond
 
     # add a custom condition if desired
     if custom_cond is not None:
-        default_cond += f"and {custom_cond}"
+        default_cond += f" and {custom_cond}"
 
     # force the format to be JSON
     fmt = "&format=JSON"
@@ -71,6 +73,7 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
         print("=======================================================")
         print(r.text.rstrip())
         print("=======================================================")
+        print(f"URL used: {url}")
     else:
         return r.json()
 
