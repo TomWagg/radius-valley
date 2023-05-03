@@ -53,7 +53,7 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
     # specify conditions on the planet name and whether to get the default parameters
     name_cond = f"lower(pl_name)+like+'%{search_name.lower()}%'" if search_name is not None else ""
     default_cond = "default_flag=1" if which == "default" else ""
-    if search_name is not None:
+    if search_name is not None and which == "default":
         default_cond = " and " + default_cond
 
     # add a custom condition if desired
