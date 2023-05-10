@@ -1,15 +1,30 @@
 import exoplanet as xo
-import lightkurve as lk
-import astropy.units as u
-import matplotlib.pyplot as plt
 import numpy as np
-
 from astropy.time import Time
-
 import pymc3 as pm
 import pymc3_ext as pmx
 
 def optimise_model(lc, initial_guesses, texp=0.5 / 24, u_init=[0.3, 0.2]):
+    """Optimise a transit model to fit some data
+
+    Parameters
+    ----------
+    lc : :class:`~lightkurve.Lightcurve`
+        The lightcurve data
+    initial_guesses : `dict`
+        Dictionary of initial guesses
+    texp : `float`, optional
+        Exposure time, by default 0.5/24
+    u_init : `list`, optional
+        Initial limb darkening guesses, by default [0.3, 0.2]
+
+    Returns
+    -------
+    model
+        PyMC3 model
+    map_soln : `dict`
+        Dictionary of optimised parameters
+    """
     n_planets = len(initial_guesses["pl_orbper"])
     t0s_bkjd = Time(initial_guesses["pl_tranmid"], format="jd").bkjd
 
@@ -58,4 +73,40 @@ def optimise_model(lc, initial_guesses, texp=0.5 / 24, u_init=[0.3, 0.2]):
         # Fit for the maximum a posteriori parameters given the simulated dataset
         map_soln = pmx.optimize(start=model.test_point)
 
-        return map_soln
+        return map_soln, model
+    
+
+def sample_posteriors(model, map_soln, tune=1000, draws=1000, cores=6, chains=2):
+    """Sample the posteriors of a given model
+
+    Parameters
+    ----------
+    model
+        PyMC3 Model
+    map_soln : `dict`
+        Dictionary of optimised parameters
+    tune : `int`, optional
+        How many tuning steps, by default 1000
+    draws : `int`, optional
+        How many draws, by default 1000
+    cores : `int`, optional
+        How many cores to use, by default 6
+    chains : `int`, optional
+        How many chains to run, by default 2
+
+    Returns
+    -------
+    trace
+        Sampled posteriors
+    """
+    with model:
+        trace = pmx.sample(
+            tune=tune,
+            draws=draws,
+            start=map_soln,
+            cores=cores,
+            chains=chains,
+            target_accept=0.9,
+            return_inferencedata=True,
+        )
+    return trace
