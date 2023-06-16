@@ -23,7 +23,7 @@ def get_flattened_lc(name, mission=None, exptime=None):
     return flat_lc
 
 
-def remove_outliers(lc, periods, t0s, durations, regular_sigma=5, transit_sigma=5.6, transit_sigma_upper=1):
+def remove_outliers(lc, periods, t0s, durations, regular_sigma=5, transit_sigma=5.6, transit_sigma_upper=5):
     # get two outlier masks, one more lenient than the other 
     _, outlier_mask = lc.remove_outliers(return_mask=True, sigma=regular_sigma)
     _, extreme_outlier_mask = lc.remove_outliers(return_mask=True, sigma=transit_sigma,
