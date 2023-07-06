@@ -50,9 +50,12 @@ def optimise_model(lc, initial_guesses, texp=0.5 / 24, u_init=[0.3, 0.2]):
             "b", ror=r, shape=n_planets, testval=initial_guesses["pl_imppar"]
         )
 
+        initial_dens = initial_guesses["st_dens"][0] if initial_guesses["berger_dens"] == -1.0\
+            else initial_guesses["berger_dens"]
+
         # fix stellar density across the stars
         log_rho_star = pm.Normal("log_rho_star",
-                                mu=np.log10(initial_guesses["st_dens"][0]), sd=1)
+                                mu=np.log10(initial_dens), sd=1)
         rho_star = pm.Deterministic("rho_star", 10**(log_rho_star))
 
         # Set up a Keplerian orbit for the planets
