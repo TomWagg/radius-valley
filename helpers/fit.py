@@ -51,7 +51,7 @@ def optimise_model(lc, initial_guesses, texp=0.5 / 24, u_init=[0.3, 0.2]):
         )
 
         initial_dens = initial_guesses["st_dens"][0] if initial_guesses["berger_dens"] == -1.0\
-            else initial_guesses["berger_dens"]
+            else initial_guesses["berger_dens"][0]
 
         # fix stellar density across the stars
         log_rho_star = pm.Normal("log_rho_star",
