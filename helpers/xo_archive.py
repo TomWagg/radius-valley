@@ -1,12 +1,14 @@
 from requests import request
 from collections import defaultdict
+import pandas as pd
+import numpy as np
 
 BASE_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+"
 
 def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
                              columns=["pl_name", "pl_letter", "pl_orbper", "pl_orbincl", "pl_orbeccen",
                                       "pl_trandep", "pl_tranmid", "pl_trandur", "pl_ratror",
-                                      "pl_imppar", "st_dens"]):
+                                      "pl_imppar", "st_dens", "gaia_id"]):
     """Get parameters for exoplanets from the Exoplanet Archive using their TAP service
 
     See here for more information: https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html
@@ -75,8 +77,43 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
         print("=======================================================")
         print(f"URL used: {url}")
     else:
-        return r.json()
+        parameters = r.json()
 
+        # convert gaia id strings to ints
+        gaia_ids = [int(p["gaia_id"].split(" ")[-1]) for p in parameters]
+
+        # pass them to helper function and save Berger densities
+        densities = get_berger_density(gaia_ids=gaia_ids)
+        for i in range(len(parameters)):
+            parameters[i]["berger_dens"] = densities[i]
+        return parameters
+
+
+def get_berger_density(gaia_ids):
+    """Get the stellar densities estimated by Berger+2023 associated with a collection of Gaia IDs
+
+    Parameters
+    ----------
+    gaia_ids : `list`
+        IDs for Gaia in DR3
+
+    Returns
+    -------
+    densities : `list`
+        Densities in g/cm^3
+    """
+    stellar_df = pd.read_csv("GKTHCatalog_Table4.csv")
+    gaia_df = pd.read_csv("GKTHCatalog_Table2.csv")
+
+    in_gaia_table = gaia_df["dr3_source_id"].isin(gaia_ids)
+    star_ids = gaia_df[in_gaia_table]["id_starname"].values
+    
+    densities = np.repeat(-1, len(gaia_ids)).astype(float)
+    in_stellar_table = stellar_df["id_starname"].isin(star_ids)
+
+    found_stars = np.isin(gaia_ids, gaia_df["dr3_source_id"].values)
+    densities[found_stars] = stellar_df[in_stellar_table]["iso_rho"].values
+    return densities
 
 def transpose_parameters(parameters):
     """Transform a list of dictionaries of parameters into a dictionary of lists
