@@ -102,12 +102,14 @@ def get_berger_density(gaia_ids):
     densities : `list`
         Densities in g/cm^3
     """
-    stellar_df = pd.read_csv("GKTHCatalog_Table4.csv")
-    gaia_df = pd.read_csv("GKTHCatalog_Table2.csv")
+    # yes, this is such a hack please don't judge me
+    base = __file__.replace("/xo_archive.py", "/")
+    stellar_df = pd.read_csv(base + "GKTHCatalog_Table4.csv")
+    gaia_df = pd.read_csv(base + "GKTHCatalog_Table2.csv")
 
     in_gaia_table = gaia_df["dr3_source_id"].isin(gaia_ids)
     star_ids = gaia_df[in_gaia_table]["id_starname"].values
-    
+
     densities = np.repeat(-1, len(gaia_ids)).astype(float)
     in_stellar_table = stellar_df["id_starname"].isin(star_ids)
 
