@@ -130,3 +130,5 @@ dmypy.json
 
 
 *.synctex.gz
+
+slurm/output/
