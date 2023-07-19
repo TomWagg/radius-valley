@@ -1,4 +1,4 @@
-1,Kepler-552 
+-1,Kepler-552 
 0,Kepler-680 
 1,Kepler-674 
 2,Kepler-235 
