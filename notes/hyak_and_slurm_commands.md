@@ -33,7 +33,7 @@ jobstats JOB_ID
 
 ## SLURM commands
 
-DON'T EVER RUN ANY INTENSIVE CODE ON THE FIRST NODE YOU LOGIN ON. (Sorry for shouting, but the IT people will shout at you if you do it so )
+DON'T EVER RUN ANY INTENSIVE CODE ON THE FIRST NODE YOU LOGIN ON. (Sorry for shouting, but the IT people will shout at you if you do it so ¯\\\_(ツ)_/¯). For reference this is because doing so will slow down the whole login node and no one else will be able to access Hyak!
 
 ### Interactive nodes
 
@@ -64,6 +64,12 @@ If you ever need to cancel a job you submitted by accident or something that's j
 ```bash
 scancel JOB_ID
 ```
+
+Perhaps you've forgotten your JOB_ID? Not to worry, try running
+```bash
+squeue -u YOURUSERNAME
+```
+And you should get a list of every job that you currently have running/queued.
 
 ## Miscellaneous
 
