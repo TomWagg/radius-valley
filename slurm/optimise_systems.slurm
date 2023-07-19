@@ -20,7 +20,8 @@ module load anaconda3_5.3
 
 conda activate /gscratch/astro/wagg/radius-valley/conda_env
 
+INPUT_PATH=/gscratch/astro/wagg/radius-valley/slurm/input/example_systems.txt
 SCRIPT_PATH=/gscratch/astro/wagg/radius-valley/slurm/optimise_system.py
 OUTPUT_PATH=/gscratch/astro/wagg/radius-valley/slurm/output/
 
-python $SCRIPT_PATH -s $SLURM_TASK_ID -o $OUTPUT_PATH
+python $SCRIPT_PATH -s $SLURM_TASK_ID -o $OUTPUT_PATH -f $INPUT_PATH
