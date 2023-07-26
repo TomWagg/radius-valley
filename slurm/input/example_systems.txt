@@ -96,6 +96,3 @@
 95,Kepler-154 
 96,Kepler-1350 
 97,Kepler-365
-229,Kepler-1643 
-230,Kepler-1534 
-231,Kepler-1644 
