@@ -2,22 +2,26 @@
 ## Job Name
 #SBATCH --job-name=radius-valley-optimise-systems
 #SBATCH --account=astro
-#SBATCH --partition=ckpt
+#SBATCH --partition=astro
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=28
-#SBATCH --time=6:00:00
+#SBATCH --ntasks-per-node=16
+#SBATCH --time=1:00:00
 #SBATCH --mem=100G
 #SBATCH -o /gscratch/astro/wagg/radius-valley/slurm/logs/opt_logs%a_%A.out
 #SBATCH -e /gscratch/astro/wagg/radius-valley/slurm/logs/opt_logs%a_%A.err
 #SBATCH --chdir=/gscratch/astro/wagg/radius-valley/slurm
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=TODO
+#SBATCH --mail-user=tomwagg@uw.edu          <--- CHANGE THIS TO YOUR EMAIL!!!
 #SBATCH --export=all
 
+# we probably only need one of these two lines, may need to delete one eventually?
 source ~/.bashrc
-conda activate    # path to conda environment (something like /gscratch/astro/wagg/conda_envs/radius_valley)
+module load anaconda3_5.3
 
+conda activate /gscratch/astro/wagg/radius-valley/conda_env
+
+INPUT_PATH=/gscratch/astro/wagg/radius-valley/slurm/input/example_systems.txt
 SCRIPT_PATH=/gscratch/astro/wagg/radius-valley/slurm/optimise_system.py
 OUTPUT_PATH=/gscratch/astro/wagg/radius-valley/slurm/output/
 
-python $SCRIPT_PATH -s $SLURM_TASK_ID -o $OUTPUT_PATH
+python $SCRIPT_PATH -s $SLURM_TASK_ID -o $OUTPUT_PATH -f $INPUT_PATH
