@@ -67,6 +67,7 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
 
     # combine into URL and perform the request
     url = BASE_URL + ','.join(columns) + from_table + name_cond + default_cond + fmt
+
     r = request(method="GET", url=url)
 
     # print out an error if it failed, otherwise return the JSON
@@ -76,14 +77,15 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
         print(r.text.rstrip())
         print("=======================================================")
         print(f"URL used: {url}")
+        
     else:
         parameters = r.json()
 
         # convert gaia id strings to ints
-        gaia_ids = [int(p["gaia_id"].split(" ")[-1]) for p in parameters]
+        gaia_ids = [int(p["gaia_id"].split(" ")[-1]) if p["gaia_id"] is not None else np.nan for p in parameters] 
 
         # pass them to helper function and save Berger densities
-        densities = get_berger_density(gaia_ids=gaia_ids)
+        densities = get_berger_density(gaia_ids=gaia_ids) 
         for i in range(len(parameters)):
             parameters[i]["berger_dens"] = densities[i]
         return parameters
@@ -106,15 +108,25 @@ def get_berger_density(gaia_ids):
     base = __file__.replace("/xo_archive.py", "/")
     stellar_df = pd.read_csv(base + "GKTHCatalog_Table4.csv")
     gaia_df = pd.read_csv(base + "GKTHCatalog_Table2.csv")
-
-    in_gaia_table = gaia_df["dr3_source_id"].isin(gaia_ids)
-    star_ids = gaia_df[in_gaia_table]["id_starname"].values
-
-    densities = np.repeat(-1, len(gaia_ids)).astype(float)
-    in_stellar_table = stellar_df["id_starname"].isin(star_ids)
-
-    found_stars = np.isin(gaia_ids, gaia_df["dr3_source_id"].values)
-    densities[found_stars] = stellar_df[in_stellar_table]["iso_rho"].values
+    
+    densities = np.repeat(-1, len(gaia_ids)).astype(float) 
+        
+    for i in range(len(gaia_ids)): 
+        if np.isnan(gaia_ids[i]) == False: 
+            in_gaia_table = gaia_df["dr3_source_id"] == gaia_ids[i]
+            star_id = gaia_df[in_gaia_table]["id_starname"].values.tolist()
+                
+            if star_id != []:
+                in_stellar_table = stellar_df["id_starname"] == star_id[0]
+                density = stellar_df[in_stellar_table]["iso_rho"].values.tolist()
+                densities[i] = density[0]  
+            #else:
+            #    print('not in table!') 
+               
+            if len(star_id)>1 or len(density)>1:
+                print('error! gaia id found to have more than one stellar id or berger density') 
+        #else:
+        #    print('nan!') 
     return densities
 
 def transpose_parameters(parameters):
