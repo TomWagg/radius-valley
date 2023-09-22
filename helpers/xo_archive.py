@@ -31,6 +31,10 @@ def get_exoplanet_parameters(search_name, which="default", custom_cond=None,
         Note the columns are different for the "all" and "composite".
         By default ["pl_name", "pl_letter", "pl_orbper", "pl_orbincl", "pl_orbeccen", "pl_trandep",
                     "pl_tranmid", "pl_trandur", "pl_ratror", "pl_imppar", "st_dens"]
+        Default units are:
+        "pl_orbper" (days), "pl_orbincl" (degrees), "pl_orbeccen" (degrees), "pl_transdep" (%), 
+        "pl_tranmid" (Julian date), "pl_trandur" (hours), "pl_ratro" (unitless), "pl_imppar" (unitless), "st_dens" (g/cm^3)
+
 
     Returns
     -------
@@ -119,12 +123,14 @@ def get_berger_density(gaia_ids):
             if star_id != []:
                 in_stellar_table = stellar_df["id_starname"] == star_id[0]
                 density = stellar_df[in_stellar_table]["iso_rho"].values.tolist()
+                if len(density)>1:
+                    print('error! gaia id found to have more than one berger density') 
                 densities[i] = density[0]  
             #else:
             #    print('not in table!') 
                
-            if len(star_id)>1 or len(density)>1:
-                print('error! gaia id found to have more than one stellar id or berger density') 
+            if len(star_id)>1:
+                print('error! gaia id found to have more than one stellar id ') 
         #else:
         #    print('nan!') 
     return densities
